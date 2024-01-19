@@ -37,8 +37,7 @@ class Bordered extends SingleChildRenderObjectWidget {
     this.elevation = 0.0,
     this.shadowColor = const Color(0xFF000000),
     super.child,
-  })  : assert(elevation >= 0.0),
-        assert(shape != BoxShape.circle || borderRadius == null);
+  }) : assert(elevation >= 0.0);
 
   /// The border to paint on foreground.
   ///

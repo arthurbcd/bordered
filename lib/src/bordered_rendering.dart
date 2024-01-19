@@ -18,15 +18,25 @@ class RenderBordered extends RenderBorderedBase {
   void paint(PaintingContext context, Offset offset) {
     final Canvas canvas = context.canvas;
     final Rect rect = offset & size;
-    final borderRadius = this.borderRadius?.resolve(textDirection);
+    var borderRadius = this.borderRadius?.resolve(textDirection);
+
+    // limit border radius
+    const min = Radius.zero;
+    final max = Radius.elliptical(size.width, size.height) / 2;
+
+    borderRadius = borderRadius?.copyWith(
+      topLeft: borderRadius.topLeft.clamp(minimum: min, maximum: max),
+      topRight: borderRadius.topRight.clamp(minimum: min, maximum: max),
+      bottomLeft: borderRadius.bottomLeft.clamp(minimum: min, maximum: max),
+      bottomRight: borderRadius.bottomRight.clamp(minimum: min, maximum: max),
+    );
 
     // add background shadow
     if (elevation > 0) {
       canvas.drawShadow(
-        borderRadius?.getBorderedPath(rect) ??
-            (shape == BoxShape.circle
-                ? (Path()..addOval(rect))
-                : (Path()..addRect(rect))),
+        shape == BoxShape.circle
+            ? (Path()..addOval(rect))
+            : borderRadius?.getBorderedPath(rect) ?? (Path()..addRect(rect)),
         shadowColor,
         elevation,
         true,
